@@ -1,0 +1,10 @@
+C:\Users\userone\UnityModelView\SingletonScritpableObjectSourceGen\Proj\bin\Debug\netstandard2.0\SingletonScriptableObjectSourceGen.deps.json
+C:\Users\userone\UnityModelView\SingletonScritpableObjectSourceGen\Proj\bin\Debug\netstandard2.0\SingletonScriptableObjectSourceGen.dll
+C:\Users\userone\UnityModelView\SingletonScritpableObjectSourceGen\Proj\bin\Debug\netstandard2.0\SingletonScriptableObjectSourceGen.pdb
+C:\Users\userone\UnityModelView\SingletonScritpableObjectSourceGen\Proj\obj\Debug\netstandard2.0\SingletonScriptableObjectSourceGen.csproj.AssemblyReference.cache
+C:\Users\userone\UnityModelView\SingletonScritpableObjectSourceGen\Proj\obj\Debug\netstandard2.0\SingletonScriptableObjectSourceGen.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\userone\UnityModelView\SingletonScritpableObjectSourceGen\Proj\obj\Debug\netstandard2.0\SingletonScriptableObjectSourceGen.AssemblyInfoInputs.cache
+C:\Users\userone\UnityModelView\SingletonScritpableObjectSourceGen\Proj\obj\Debug\netstandard2.0\SingletonScriptableObjectSourceGen.AssemblyInfo.cs
+C:\Users\userone\UnityModelView\SingletonScritpableObjectSourceGen\Proj\obj\Debug\netstandard2.0\SingletonScriptableObjectSourceGen.csproj.CoreCompileInputs.cache
+C:\Users\userone\UnityModelView\SingletonScritpableObjectSourceGen\Proj\obj\Debug\netstandard2.0\SingletonScriptableObjectSourceGen.dll
+C:\Users\userone\UnityModelView\SingletonScritpableObjectSourceGen\Proj\obj\Debug\netstandard2.0\SingletonScriptableObjectSourceGen.pdb
