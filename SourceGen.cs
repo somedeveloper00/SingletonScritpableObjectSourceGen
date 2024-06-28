@@ -6,10 +6,12 @@ using SingletonScritpableObjectSourceGen;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ExampleSourceGenerator {
+namespace ExampleSourceGenerator
+{
     [Generator]
-    public class ExampleSourceGenerator : ISourceGenerator {
-        const string usings = @"
+    public class ExampleSourceGenerator : ISourceGenerator
+    {
+        private const string usings = @"
 // This file is auto-generated. Don't edit it.
 using System;
 using System.IO;
@@ -19,10 +21,10 @@ using UnityEngine;
 using UnityEditor;
 #endif
 ";
-        const string ns1 = @"
+        private const string ns1 = @"
 namespace $1 {
 ";
-        const string body = @"
+        private const string body = @"
     $2 partial class $0 {
         private static $0 s_instance;
         public static $0 Instance {
@@ -41,10 +43,10 @@ namespace $1 {
             }
         }
 
-        protected const string ResourcesFolderPath = ""SingletonSOs"";
-        protected static readonly string ResourcesPath = Path.Combine(ResourcesFolderPath, typeof($0).Name);
+        $3 const string ResourcesFolderPath = ""SingletonSOs"";
+        $3 static readonly string ResourcesPath = Path.Combine(ResourcesFolderPath, typeof($0).Name);
 
-        protected virtual void Awake() {
+        $3 virtual void Awake() {
             if (!s_instance || s_instance == this) return;
             Debug.LogError($""{typeof($0).Name} deleted. Another instance is already available."");
 #if UNITY_EDITOR
@@ -55,7 +57,7 @@ namespace $1 {
                 Destroy(this);
         }
 
-        protected virtual void OnDestroy() {
+        $3 virtual void OnDestroy() {
             if (s_instance == this) {
                 Debug.LogWarning($""{typeof($0).Name} instance destroyed. Singleton instance is no longer available."");
             }
@@ -83,40 +85,52 @@ namespace $1 {
 
     }
 ";
-        const string ns2 = @"
+        private const string ns2 = @"
 }
 ";
 
-        public void Initialize(GeneratorInitializationContext context) {
+        public void Initialize(GeneratorInitializationContext context)
+        {
             context.RegisterForSyntaxNotifications(() => new SyntaxReceiver());
         }
 
-        public void Execute(GeneratorExecutionContext context) {
-            if (!(context.SyntaxContextReceiver is SyntaxReceiver receiver)) {
+        public void Execute(GeneratorExecutionContext context)
+        {
+            if (!(context.SyntaxContextReceiver is SyntaxReceiver receiver))
+            {
                 return;
             }
-            foreach (var type in receiver.Types) {
+
+            foreach (var type in receiver.Types)
+            {
                 var sb = new StringBuilder(usings);
 
                 string ns = GetFullNamespace(type);
                 if (!string.IsNullOrEmpty(ns))
+                {
                     sb.Append(ns1);
+                }
 
                 sb.Append(body);
-                sb.ReplaceArguments(type.Name, ns, type.DeclaredAccessibility.ToString().ToLower());
+                sb.ReplaceArguments(type.Name, ns, type.DeclaredAccessibility.ToString().ToLower(),
+                    type.IsSealed ? string.Empty : "protected");
 
                 if (!string.IsNullOrEmpty(ns))
+                {
                     sb.Append(ns2);
+                }
 
                 context.AddSource($"{type.Name}_g.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
             }
 
         }
 
-        string GetFullNamespace(ITypeSymbol type) {
+        private string GetFullNamespace(ITypeSymbol type)
+        {
             var ns = type.ContainingNamespace;
             var sb = new StringBuilder();
-            while (ns != null) {
+            while (ns != null)
+            {
                 sb.Insert(0, ns.Name);
                 sb.Insert(0, ".");
                 ns = ns.ContainingNamespace;
@@ -125,26 +139,50 @@ namespace $1 {
         }
     }
 
-    class SyntaxReceiver : ISyntaxContextReceiver {
-        public List<ITypeSymbol> Types { get; } = new List<ITypeSymbol>();
-        public void OnVisitSyntaxNode(GeneratorSyntaxContext context) {
-            if (context.Node is ClassDeclarationSyntax classDeclarationSyntax) {
-                if (!classDeclarationSyntax.Modifiers.Any(SyntaxKind.PartialKeyword)) return;
+    internal class SyntaxReceiver : ISyntaxContextReceiver
+    {
+        public HashSet<ITypeSymbol> Types { get; } = new HashSet<ITypeSymbol>();
+
+        public void OnVisitSyntaxNode(GeneratorSyntaxContext context)
+        {
+            if (context.Node is ClassDeclarationSyntax classDeclarationSyntax)
+            {
+                if (!classDeclarationSyntax.Modifiers.Any(SyntaxKind.PartialKeyword))
+                {
+                    return;
+                }
+
                 var model = context.SemanticModel;
                 var symbol = model.GetDeclaredSymbol(classDeclarationSyntax);
 
-                if (!(symbol is ITypeSymbol typeSymbol)) return;
-                if (typeSymbol.IsAbstract) return;
-                if (!IsDerivedFrom(typeSymbol.BaseType, "SingletonScriptableObject")) return;
+                if (!(symbol is ITypeSymbol typeSymbol))
+                {
+                    return;
+                }
+
+                if (typeSymbol.IsAbstract)
+                {
+                    return;
+                }
+
+                if (!IsDerivedFrom(typeSymbol.BaseType, "SingletonScriptableObject"))
+                {
+                    return;
+                }
 
                 Types.Add(typeSymbol);
             }
         }
 
-        private bool IsDerivedFrom(INamedTypeSymbol type, string target) {
-            while (type != null) {
+        private bool IsDerivedFrom(INamedTypeSymbol type, string target)
+        {
+            while (type != null)
+            {
                 if (type.Name == target)
+                {
                     return true;
+                }
+
                 type = type.BaseType;
             }
             return false;
